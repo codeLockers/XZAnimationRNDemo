@@ -1,0 +1,3 @@
+rootProject.name = 'XZAnimationRNDemo'
+
+include ':app'
