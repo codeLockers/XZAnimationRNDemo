@@ -28,6 +28,10 @@ export default class XZAnimationRNDemo extends Component {
       fadeInOpacity3:new Animated.Value(0),
       rotation3:new Animated.Value(0),
       fontSize3:new Animated.Value(0),
+
+      fadeInOpacity4:new Animated.Value(0),
+      backgroundColor4:new Animated.Value(0),
+      left4:new Animated.Value(0)
     };
   }
 
@@ -37,7 +41,7 @@ export default class XZAnimationRNDemo extends Component {
     Animated.spring(this.state.bounceValue1,{
       toValue:0.8,
       friction:1,}).start(()=>{
-        console.log('finish')
+        console.log('finish1')
       })
 
     //opacity Animation
@@ -48,6 +52,7 @@ export default class XZAnimationRNDemo extends Component {
       easing:Easing.linear
     }).start()
 
+    //parallel Animation
     Animated.parallel(['fadeInOpacity3','fontSize3','rotation3'].map(property => {
 
       return Animated.timing(this.state[property],{
@@ -56,6 +61,24 @@ export default class XZAnimationRNDemo extends Component {
       })
 
     })).start()
+
+    //sequence Animation
+    Animated.sequence([
+      Animated.timing(this.state.fadeInOpacity4,{
+        toValue:1,
+        duration:2000
+      }),
+      Animated.timing(this.state.backgroundColor4,{
+        toValue:1,
+        duration:2000
+      }),
+      Animated.timing(this.state.left4,{
+        toValue:1,
+        duration:2000
+      })
+    ]).start(() => {
+      console.log('finish4')
+    })
 
   }
 
@@ -84,6 +107,22 @@ export default class XZAnimationRNDemo extends Component {
         }]
           }}>组合动画
         </Animated.Text>
+
+        <Animated.View 
+        style={{
+          marginTop:20,
+          width:100,
+          height:100,
+          opacity:this.state.fadeInOpacity4,
+          backgroundColor:this.state.backgroundColor4.interpolate({
+            inputRange:[0,1],
+            outputRange:['yellow','blue']
+          }),
+          left:this.state.left4.interpolate({
+            inputRange:[0,1],
+            outputRange:[0,100]
+          })
+        }}></Animated.View>
 
       </View>
     );
