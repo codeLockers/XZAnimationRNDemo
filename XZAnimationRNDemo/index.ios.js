@@ -10,7 +10,8 @@ import {
   StyleSheet,
   Text,
   View,
-  Animated
+  Animated,
+  Easing
 } from 'react-native';
 
 export default class XZAnimationRNDemo extends Component {
@@ -35,31 +36,27 @@ export default class XZAnimationRNDemo extends Component {
     this.state.bounceValue1.setValue(1.5)
     Animated.spring(this.state.bounceValue1,{
       toValue:0.8,
-      friction:1,}).start()
+      friction:1,}).start(()=>{
+        console.log('finish')
+      })
 
     //opacity Animation
     this.state.fadeInOpacity2.setValue(0)
     Animated.timing(this.state.fadeInOpacity2,{
       toValue:1,
       duration:1500,
+      easing:Easing.linear
     }).start()
 
+    Animated.parallel(['fadeInOpacity3','fontSize3','rotation3'].map(property => {
 
-    // Animated.parallel(['fadeInOpacity3','rotation3','fontSize3'].map(porperty => {
-      // console.log(porperty)
-      // return Animated.timing(this.state.{porperty},{
-      //   toValue:1,
-      //   duration:2
-      // })
-      // 
-      
-    //   Animated.timing(this.state.fadeInOpacity3,{
-    //     toValue:1,
-    //     duration:2000
-    //   })
+      return Animated.timing(this.state[property],{
+        toValue:1,
+        duration:2000
+      })
 
+    })).start()
 
-    // })).start()
   }
 
   render() {
@@ -71,6 +68,23 @@ export default class XZAnimationRNDemo extends Component {
         />
         <Animated.Text style={{marginTop:20,fontSize:25,color:'black',opacity:this.state.fadeInOpacity2}}>文字淡出</Animated.Text>
         
+        <Animated.Text 
+        style={{
+          marginTop:20,
+          color:'black',
+          opacity:this.state.fadeInOpacity3,
+          fontSize:this.state.fontSize3.interpolate({
+            inputRange:[0,1],
+            outputRange:[12,26]
+          }),
+          transform:[{rotateZ:this.state.rotation3.interpolate({
+            inputRange:[0,1],
+            outputRange:['0deg','360deg']
+          })
+        }]
+          }}>组合动画
+        </Animated.Text>
+
       </View>
     );
   }
