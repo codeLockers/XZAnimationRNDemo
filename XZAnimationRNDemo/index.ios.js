@@ -31,7 +31,10 @@ export default class XZAnimationRNDemo extends Component {
 
       fadeInOpacity4:new Animated.Value(0),
       backgroundColor4:new Animated.Value(0),
-      left4:new Animated.Value(0)
+      left4:new Animated.Value(0),
+
+      right5:new Animated.Value(0),
+      left5:new Animated.Value(0)
     };
   }
 
@@ -72,6 +75,7 @@ export default class XZAnimationRNDemo extends Component {
         toValue:1,
         duration:2000
       }),
+      Animated.delay(1000),
       Animated.timing(this.state.left4,{
         toValue:1,
         duration:2000
@@ -79,6 +83,18 @@ export default class XZAnimationRNDemo extends Component {
     ]).start(() => {
       console.log('finish4')
     })
+
+    //stagger Animation
+    Animated.stagger(5000,[
+      Animated.timing(this.state.left5,{
+        toValue:1,
+        duration:2000
+      }),
+      Animated.timing(this.state.right5,{
+        toValue:1,
+        duration:2000
+      })
+      ]).start()
 
   }
 
@@ -123,6 +139,25 @@ export default class XZAnimationRNDemo extends Component {
             outputRange:[0,100]
           })
         }}></Animated.View>
+
+        <Animated.View
+        style={{
+          marginTop:20,
+          width:100,
+          height:100,
+          backgroundColor:this.state.right5.interpolate({
+            inputRange:[0,1],
+            outputRange:['black','green']
+          }),
+          left:this.state.left5.interpolate({
+            inputRange:[0,1],
+            outputRange:[0,100]
+          }),
+          // right:this.state.right5.interpolate({
+          //   inputRange:[0,1],
+          //   outputRange:[0,200]
+          // })
+          }}></Animated.View>
 
       </View>
     );
