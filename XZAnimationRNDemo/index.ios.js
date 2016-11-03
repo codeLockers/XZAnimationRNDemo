@@ -11,10 +11,13 @@ import {
   Text,
   View,
   Animated,
-  Easing
+  Easing,
+  PanResponder,
 } from 'react-native';
 
 export default class XZAnimationRNDemo extends Component {
+
+  _panResponder:PanResponder
 
   constructor(props) {
     super(props);
@@ -36,7 +39,9 @@ export default class XZAnimationRNDemo extends Component {
       backgroundColor5:new Animated.Value(0),
       left5:new Animated.Value(0),
 
-      left6:new Animated.Value(0)
+      left6:new Animated.Value(0),
+
+      tranlate7:new Animated.ValueXY()
     };
   }
 
@@ -45,6 +50,54 @@ export default class XZAnimationRNDemo extends Component {
     Animated.spring(this.state.bounceValue1,{
       toValue:0.8,
       friction:1,}).start(() => this._startAnimation())
+  }
+
+  componentWillMount() {
+    //手势
+    this._panResponder = PanResponder.create({
+      onStartShouldSetPanResponder:(evt,gestureState) => true,
+      onStartShouldSetPanResponderCapture:(evt,gestureState) => true,
+      onMoveShouldSetPanResponder:(evt,gestureState) => true,
+      onMoveShouldSetPanResponderCapture:(evt,gestureState) => true,
+
+      onPanResponderGrant: (evt, gestureState) => {
+        // 开始手势操作。给用户一些视觉反馈，让他们知道发生了什么事情！
+        // console.log('Grant')
+        // console.log(evt.nativeEvent.locationX)
+        // console.log(evt.nativeEvent.locationY)
+        // console.log(gestureState.moveX)
+        // console.log(gestureState.moveY)
+      },
+      // onPanResponderMove: (evt, gestureState) => {
+        // 最近一次的移动距离为gestureState.move{X,Y}
+
+        // 从成为响应者开始时的累计手势移动距离为gestureState.d{x,y}
+        // console.log('move')
+        // console.log(evt.nativeEvent.locationX)
+        // console.log(evt.nativeEvent.locationY)
+        // console.log(gestureState.moveX)
+        // console.log(gestureState.moveY)
+      // },
+      onPanResponderMove: Animated.event(
+          [null,{dx:this.state.tranlate7.x,dy:this.state.tranlate7.y}]
+        ),
+      onPanResponderTerminationRequest: (evt, gestureState) => true,
+      onPanResponderRelease: (evt, gestureState) => {
+        // 用户放开了所有的触摸点，且此时视图已经成为了响应者。
+        // 一般来说这意味着一个手势操作已经成功完成。
+        console.log('Release')
+        Animated.spring(this.state.tranlate7,{
+          toValue:{x:0,y:0}
+        }).start()
+      },
+      onPanResponderTerminate: (evt, gestureState) => {
+        // 另一个组件已经成为了新的响应者，所以当前手势将被取消。
+        console.log('Terminate')
+        Animated.spring(this.state.tranlate7,{
+          toValue:{x:0,y:0}
+        }).start()
+      },
+    })
   }
 
   componentDidMount() {
@@ -107,7 +160,7 @@ export default class XZAnimationRNDemo extends Component {
       }),
       duration:0
     }).start(() => {
-      console.log(this.state.left6)
+      // console.log(this.state.left6)
     })
   }
 
@@ -141,7 +194,7 @@ export default class XZAnimationRNDemo extends Component {
         style={{
           marginTop:20,
           width:100,
-          height:100,
+          height:50,
           opacity:this.state.fadeInOpacity4,
           backgroundColor:this.state.backgroundColor4.interpolate({
             inputRange:[0,1],
@@ -157,7 +210,7 @@ export default class XZAnimationRNDemo extends Component {
         style={{
           marginTop:20,
           width:100,
-          height:100,
+          height:50,
           backgroundColor:this.state.backgroundColor5.interpolate({
             inputRange:[0,1],
             outputRange:['black','green'] 
@@ -173,11 +226,23 @@ export default class XZAnimationRNDemo extends Component {
             marginTop:20,
             backgroundColor:'purple',
             width:100,
-            height:100,
+            height:50,
             left:this.state.left6
           }}>
           </Animated.View>
-
+          <Animated.View
+          style={{
+            marginTop:20,
+            width:100,
+            height:50,
+            backgroundColor:'gray',
+            transform:[
+              {translateX:this.state.tranlate7.x},
+              {translateY:this.state.tranlate7.y}
+            ]
+          }}
+          {...this._panResponder.panHandlers}>
+          </Animated.View>
       </View>
     );
   }
