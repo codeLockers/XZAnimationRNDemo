@@ -33,19 +33,23 @@ export default class XZAnimationRNDemo extends Component {
       backgroundColor4:new Animated.Value(0),
       left4:new Animated.Value(0),
 
-      right5:new Animated.Value(0),
-      left5:new Animated.Value(0)
+      backgroundColor5:new Animated.Value(0),
+      left5:new Animated.Value(0),
+
+      left6:new Animated.Value(0)
     };
+  }
+
+  _startAnimation(){
+    this.state.bounceValue1.setValue(1.5)
+    Animated.spring(this.state.bounceValue1,{
+      toValue:0.8,
+      friction:1,}).start(() => this._startAnimation())
   }
 
   componentDidMount() {
     //scale Animation
-    this.state.bounceValue1.setValue(1.5)
-    Animated.spring(this.state.bounceValue1,{
-      toValue:0.8,
-      friction:1,}).start(()=>{
-        console.log('finish1')
-      })
+    this._startAnimation()
 
     //opacity Animation
     this.state.fadeInOpacity2.setValue(0)
@@ -81,7 +85,6 @@ export default class XZAnimationRNDemo extends Component {
         duration:2000
       })
     ]).start(() => {
-      console.log('finish4')
     })
 
     //stagger Animation
@@ -90,12 +93,22 @@ export default class XZAnimationRNDemo extends Component {
         toValue:1,
         duration:2000
       }),
-      Animated.timing(this.state.right5,{
+      Animated.timing(this.state.backgroundColor5,{
         toValue:1,
         duration:2000
       })
       ]).start()
 
+    //跟踪动态值
+    Animated.timing(this.state.left6,{
+      toValue:this.state.left5.interpolate({
+        inputRange:[0,1],
+        outputRange:[0,50]
+      }),
+      duration:0
+    }).start(() => {
+      console.log(this.state.left6)
+    })
   }
 
   render() {
@@ -145,19 +158,25 @@ export default class XZAnimationRNDemo extends Component {
           marginTop:20,
           width:100,
           height:100,
-          backgroundColor:this.state.right5.interpolate({
+          backgroundColor:this.state.backgroundColor5.interpolate({
             inputRange:[0,1],
-            outputRange:['black','green']
+            outputRange:['black','green'] 
           }),
           left:this.state.left5.interpolate({
             inputRange:[0,1],
             outputRange:[0,100]
           }),
-          // right:this.state.right5.interpolate({
-          //   inputRange:[0,1],
-          //   outputRange:[0,200]
-          // })
           }}></Animated.View>
+
+          <Animated.View
+          style={{
+            marginTop:20,
+            backgroundColor:'purple',
+            width:100,
+            height:100,
+            left:this.state.left6
+          }}>
+          </Animated.View>
 
       </View>
     );
